@@ -19,11 +19,8 @@ namespace Movies.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateMovieRequest request)
         {
             var movie = request.MapToMovie();
-
             await _movieRepository.CreateAsync(movie);
-            
-            var response = movie.MapToResponse();
-            return Created($"/{ApiEndpoints.Movies.Create}/{movie.Id}", response);
+            return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
         }
 
         [HttpGet(ApiEndpoints.Movies.Get)]
