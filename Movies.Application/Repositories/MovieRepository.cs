@@ -2,7 +2,6 @@
 using Movies.Application.Database;
 using Movies.Application.Model;
 using System.Data;
-using System.Text.RegularExpressions;
 
 namespace Movies.Application.Repositories
 {
@@ -10,7 +9,7 @@ namespace Movies.Application.Repositories
     public class MovieRepository : IMovieRepository
     {
         private readonly IDbConnectionFactory _dbConnectionFactory;
-        public MovieRepository(IDbConnectionFactory dbConnectionFactory) 
+        public MovieRepository(IDbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
@@ -25,14 +24,14 @@ namespace Movies.Application.Repositories
                 values (@Id, @Slug, @Title, @YearOfRelease)
                 """, movie));
 
-            if (result > 0) 
+            if (result > 0)
             {
                 foreach (var genre in movie.Genres)
                 {
                     await connection.ExecuteAsync(new CommandDefinition("""
                         insert into genres (movieId, name)
                         values (@MovieId, @Name)
-                        """, new { MovieId = movie.Id, Name = genre}));
+                        """, new { MovieId = movie.Id, Name = genre }));
                 }
             }
 
@@ -116,7 +115,8 @@ namespace Movies.Application.Repositories
                 delete from genres where movieid = @id
                 """, new { id = movie.Id }));
 
-            foreach (var genre in movie.Genres) {
+            foreach (var genre in movie.Genres)
+            {
                 await connection.ExecuteAsync(new CommandDefinition("""
                     insert into genres (movieid, name)
                     values (@MovieId, @Name)
