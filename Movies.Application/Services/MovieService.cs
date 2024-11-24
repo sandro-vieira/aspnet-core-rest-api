@@ -16,44 +16,44 @@ namespace Movies.Application.Services
             _movieValidator = movieValidator;
         }
 
-        public async Task<bool> CreateAsync(Movie movie)
+        public async Task<bool> CreateAsync(Movie movie, CancellationToken token = default)
         {
-            await _movieValidator.ValidateAndThrowAsync(movie);
-            return await _movieRepository.CreateAsync(movie);
+            await _movieValidator.ValidateAndThrowAsync(movie, cancellationToken: token);
+            return await _movieRepository.CreateAsync(movie, token);
         }
 
-        public Task<Movie?> GetByIdAsync(Guid id)
+        public Task<Movie?> GetByIdAsync(Guid id, CancellationToken token = default)
         {
-            return _movieRepository.GetByIdAsync(id);
+            return _movieRepository.GetByIdAsync(id, token);
         }
 
-        public Task<Movie?> GetBySlugAsync(string slug)
+        public Task<Movie?> GetBySlugAsync(string slug, CancellationToken token = default)
         {
-            return _movieRepository.GetBySlugAsync(slug);
+            return _movieRepository.GetBySlugAsync(slug, token);
         }
 
-        public Task<IEnumerable<Movie>> GetAllAsync()
+        public Task<IEnumerable<Movie>> GetAllAsync(CancellationToken token = default)
         {
-            return _movieRepository.GetAllAsync();
+            return _movieRepository.GetAllAsync(token);
         }
 
-        public async Task<Movie?> UpdateAsync(Movie movie)
+        public async Task<Movie?> UpdateAsync(Movie movie, CancellationToken token = default)
         {
-            await _movieValidator.ValidateAndThrowAsync(movie);
+            await _movieValidator.ValidateAndThrowAsync(movie, cancellationToken: token);
 
-            var movieExists = await _movieRepository.ExistsByIdAsync(movie.Id);
+            var movieExists = await _movieRepository.ExistsByIdAsync(movie.Id, token);
             if (!movieExists)
             {
                 return null;
             }
 
-            await _movieRepository.UpdateAsync(movie);
+            await _movieRepository.UpdateAsync(movie, token);
             return movie;
         }
 
-        public Task<bool> DeleteByIdAsync(Guid id)
+        public Task<bool> DeleteByIdAsync(Guid id, CancellationToken token = default)
         {
-            return _movieRepository.DeleteByIdAsync(id);
+            return _movieRepository.DeleteByIdAsync(id, token);
         }
     }
 }
