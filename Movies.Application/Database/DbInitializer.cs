@@ -20,7 +20,7 @@ namespace Movies.Application.Database
                   id UUID primary key,
                   slug TEXT not null,
                   title TEXT not null,
-                  yearofrelease integer not null);
+                  yearofrelease INTEGER not null);
                 """);
 
             await connection.ExecuteAsync("""
@@ -33,6 +33,14 @@ namespace Movies.Application.Database
                 create table if not exists genres (
                   movieId UUID references movies (id),
                   name TEXT not null);
+                """);
+
+            await connection.ExecuteAsync("""
+                create table if not exists ratings (
+                  userId UUID,
+                  movieId UUID references movies (id),
+                  rating INTEGER not null,
+                  primary key (userId, movieId));
                 """);
         }
     }
