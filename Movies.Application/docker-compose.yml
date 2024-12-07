@@ -1,6 +1,7 @@
 ﻿services:
 
   db:
+    container_name: postgres
     image: postgres:latest
     restart: always
     environment:
@@ -9,3 +10,14 @@
       - POSTGRES_DB=movies
     ports:
       - '5432:5432'
+    volumes:
+      - postgres_data:/var/opt/postgres
+    networks:
+      - study-place
+
+networks:
+  study-place:
+
+volumes:
+  postgres_data:
+    driver: local
