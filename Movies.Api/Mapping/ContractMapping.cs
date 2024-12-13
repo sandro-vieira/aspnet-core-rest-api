@@ -1,4 +1,5 @@
-﻿using Movies.Application.Model;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Movies.Application.Model;
 using Movies.Contracts.Requests;
 using Movies.Contracts.Responses;
 
@@ -42,11 +43,15 @@ namespace Movies.Api.Mapping
             };
         }
 
-        public static MoviesResponse MapToResponse(this IEnumerable<Movie> movies)
+        public static MoviesResponse MapToResponse(this IEnumerable<Movie> movies,
+            int page, int pageSize, int totalCount)
         {
             return new MoviesResponse
             {
-                Items = movies.Select(MapToResponse)
+                Items = movies.Select(MapToResponse),
+                Page = page,
+                PageSize = pageSize,
+                Total = totalCount
             };
         }
 
@@ -62,21 +67,40 @@ namespace Movies.Api.Mapping
 
         public static GetAllMoviesOptions MapToOptions(this GetAllMoviesRequest request)
         {
-#pragma warning disable S3358 // Ternary operators should not be nested
-            return new GetAllMoviesOptions
+            var options = new GetAllMoviesOptions
             {
                 Title = request.Title,
                 YearOfRelease = request.Year,
-                SortField = (bool)request.SortBy?.Trim('+','-').Equals("year", StringComparison.OrdinalIgnoreCase) 
-                    ? "yearOfRelease" 
-                    : request.SortBy?.Trim('+', '-'),
-                SortOrder = request.SortBy is null
-                    ? SortOrder.Unsorted
-                    : request.SortBy.StartsWith('-')
-                        ? SortOrder.Descending
-                        : SortOrder.Ascending
+                Page = request.Page,
+                PageSize = request.PageSize
             };
-#pragma warning restore S3358 // Ternary operators should not be nested
+
+            if (request.SortBy is null)
+            {
+                options.SortOrder = SortOrder.Unsorted;
+            }
+            else
+            {
+                if (request.SortBy.StartsWith('-'))
+                {
+                    options.SortOrder = SortOrder.Descending;
+                }
+                else
+                {
+                    options.SortOrder = SortOrder.Ascending;
+                }
+
+                var sortBy = request.SortBy.Trim('+', '-');
+
+                options.SortField = sortBy.ToLower() switch
+                {
+                    "title" => sortBy,
+                    "year" => "yearOfRelease",
+                    _ => "invalid",
+                };
+            }
+
+            return options;
         }
 
         public static GetAllMoviesOptions WithUser(this GetAllMoviesOptions options, Guid? userId)
