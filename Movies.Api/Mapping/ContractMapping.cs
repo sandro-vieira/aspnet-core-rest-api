@@ -62,11 +62,21 @@ namespace Movies.Api.Mapping
 
         public static GetAllMoviesOptions MapToOptions(this GetAllMoviesRequest request)
         {
+#pragma warning disable S3358 // Ternary operators should not be nested
             return new GetAllMoviesOptions
             {
                 Title = request.Title,
-                YearOfRelease = request.Year
+                YearOfRelease = request.Year,
+                SortField = (bool)request.SortBy?.Trim('+','-').Equals("year", StringComparison.OrdinalIgnoreCase) 
+                    ? "yearOfRelease" 
+                    : request.SortBy?.Trim('+', '-'),
+                SortOrder = request.SortBy is null
+                    ? SortOrder.Unsorted
+                    : request.SortBy.StartsWith('-')
+                        ? SortOrder.Descending
+                        : SortOrder.Ascending
             };
+#pragma warning restore S3358 // Ternary operators should not be nested
         }
 
         public static GetAllMoviesOptions WithUser(this GetAllMoviesOptions options, Guid? userId)
