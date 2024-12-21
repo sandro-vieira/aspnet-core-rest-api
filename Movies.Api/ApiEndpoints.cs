@@ -1,12 +1,16 @@
-﻿namespace Movies.Api
+﻿namespace Movies.Api;
+
+public static class ApiEndpoints
 {
-    public static class ApiEndpoints
+    private const string ApiBase = "api";
+
+    public static class V1
     {
-        private const string ApiBase = "api";
+        private const string VersionBase = $"{ApiBase}/v1";
 
         public static class Movies
         {
-            private const string Base = $"{ApiBase}/movies";
+            private const string Base = $"{VersionBase}/movies";
 
             public const string Create = Base;
             public const string Get = $"{Base}/{{idOrSlug}}";
@@ -20,9 +24,11 @@
 
         public static class Ratings
         {
-            private const string Base = $"{ApiBase}/ratings";
+            private const string Base = $"{VersionBase}/ratings";
 
             public const string GetUserRatings = $"{Base}/me";
         }
+
     }
+
 }
