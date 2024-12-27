@@ -11,7 +11,7 @@
     ports:
       - '5432:5432'
     volumes:
-      - postgres_data:/var/opt/postgres
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - study-place
 
@@ -19,5 +19,5 @@ networks:
   study-place:
 
 volumes:
-  postgres_data:
+  postgres-data:
     driver: local
